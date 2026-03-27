@@ -603,8 +603,8 @@ wheels = [
 
 [[package]]
 name = "orb-worker-scvmm"
-version = "0.1.0"
-source = { virtual = "." }
+version = "0.1.0a1"
+source = { editable = "." }
 dependencies = [
     { name = "netboxlabs-orb-worker" },
     { name = "pywinrm" },
