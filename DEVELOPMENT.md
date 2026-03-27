@@ -55,6 +55,111 @@ pytest --cov=scvmm
 python -m pytest tests/test_models.py -v
 ```
 
+### Release Process
+
+The project uses a `release.sh` script to manage version bumping and publishing. The script automates:
+1. Version bumping with `uv version --bump`
+2. Creating git commit and tag
+3. Publishing to PyPI via GitHub Actions
+
+#### Understanding `uv version`
+
+The `uv version` command manages the project version stored in `pyproject.toml`. The script uses `uv version --bump` to automatically increment versions:
+
+```bash
+# `uv version --bump` accepts these arguments:
+uv version --bump major      # Bump major (1.0.0 → 2.0.0)
+uv version --bump minor      # Bump minor (1.0.0 → 1.1.0)
+uv version --bump patch      # Bump patch (1.0.0 → 1.0.1)
+uv version --bump alpha      # Bump/create alpha prerelease (1.0.0 → 1.0.1a1)
+uv version --bump beta       # Bump/create beta prerelease (1.0.0 → 1.0.1b1)
+uv version --bump rc         # Bump/create RC prerelease (1.0.0 → 1.0.1rc1)
+uv version --bump stable     # Finalize prerelease (1.0.0rc1 → 1.0.0)
+```
+
+The `--bump` flag can be specified **multiple times** to combine operations:
+
+```bash
+# Combine version bump with prerelease creation
+uv version --bump patch --bump alpha   # 1.0.0 → 1.0.1a1
+uv version --bump minor --bump beta    # 1.0.0 → 1.1.0b1
+uv version --bump major --bump rc      # 1.0.0 → 2.0.0rc1
+```
+
+#### Using the Release Script
+
+The `release.sh` script wraps `uv version --bump` with git operations and validation:
+
+```bash
+# Basic version bumps
+./release.sh patch              # Bump patch: 1.0.0 → 1.0.1
+./release.sh minor              # Bump minor: 1.0.0 → 1.1.0
+./release.sh major              # Bump major: 1.0.0 → 2.0.0
+
+# Prerelease bumps (increment existing prerelease)
+./release.sh alpha              # Bump alpha: 1.0.0a1 → 1.0.0a2
+./release.sh beta               # Bump beta: 1.0.0b1 → 1.0.0b2
+./release.sh rc                 # Bump RC: 1.0.0rc1 → 1.0.0rc2
+
+# Combined: version bump + start new prerelease cycle
+./release.sh patch alpha        # Bump patch + alpha: 1.0.0 → 1.0.1a1
+./release.sh minor beta         # Bump minor + beta: 1.0.0 → 1.1.0b1
+./release.sh major rc           # Bump major + RC: 1.0.0 → 2.0.0rc1
+
+# Finalize a prerelease (remove alpha/beta/rc suffix)
+./release.sh stable             # Finalize: 1.0.0rc1 → 1.0.0
+```
+
+#### How the Script Works
+
+1. **Validation**: Checks that git is clean and `uv` is installed (unless `--force` is used)
+2. **Preview**: Shows what version bump would occur with `--dry-run`
+3. **Confirmation**: Prompts for confirmation (skipped with `--force`)
+4. **Version Bump**: Calls `uv version --bump` (single or multiple times) to update `pyproject.toml` and `uv.lock`
+5. **Git Operations**: Creates commit and annotated tag with the new version
+6. **Publishing**: Pushes to `origin stable` branch and pushes the version tag
+7. **GitHub Actions**: Detects the version tag and publishes to PyPI automatically
+
+#### Release Examples
+
+**Releasing a stable patch version**:
+```bash
+./release.sh patch          # 1.2.3 → 1.2.4
+# Creates: commit "bump version to 1.2.4" and tag "v1.2.4"
+```
+
+**Starting an alpha cycle for next patch**:
+```bash
+./release.sh patch alpha    # 1.2.3 → 1.2.4a1
+# Creates: commit "bump version to 1.2.4a1" and tag "v1.2.4a1"
+```
+
+**Releasing multiple alpha builds**:
+```bash
+./release.sh alpha          # 1.2.4a1 → 1.2.4a2
+./release.sh alpha          # 1.2.4a2 → 1.2.4a3
+```
+
+**Finalizing an alpha release**:
+```bash
+./release.sh stable         # 1.2.4a3 → 1.2.4
+# Creates: commit "bump version to 1.2.4" and tag "v1.2.4"
+```
+
+#### Options
+
+```bash
+./release.sh --force patch  # Skip git clean check and confirmation
+./release.sh --help         # Show usage and all available commands
+```
+
+#### Prerequisites
+
+- Git repository must be clean (no uncommitted changes) unless `--force` is used
+- `uv` must be installed
+- You must have push access to `origin stable` branch
+- GitHub Actions CI must pass for the tag to be published to PyPI
+
 ## Project Architecture
 
 ```
