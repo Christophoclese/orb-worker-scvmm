@@ -248,7 +248,7 @@ class TestEntityReturnTypes:
     @patch('scvmm.collect.winrm.Session')
     def test_backend_returns_correct_entity_types(self, mock_session_class, mock_scvmm_data, mock_policy):
         """Test that backend returns correct entity types."""
-        from netboxlabs.diode.sdk.ingester import Entity
+        from google.protobuf.message import Message
         
         mock_session_instance = MagicMock()
         mock_session_class.return_value = mock_session_instance
@@ -263,9 +263,16 @@ class TestEntityReturnTypes:
         backend = ScvmmBackend()
         entities = list(backend.run("test-policy", mock_policy))
         
-        # All should be Entity instances
+        # All should be protobuf Entity message instances
         for entity in entities:
-            assert isinstance(entity, Entity)
+            assert isinstance(entity, Message)
+            # Verify it's an ingester Entity (has cluster, vm_interface, etc. fields)
+            assert type(entity).__name__ == "Entity"
+            assert "cluster" in type(entity).DESCRIPTOR.fields_by_name or \
+                   "virtual_machine" in type(entity).DESCRIPTOR.fields_by_name or \
+                   "vm_interface" in type(entity).DESCRIPTOR.fields_by_name or \
+                   "virtual_disk" in type(entity).DESCRIPTOR.fields_by_name or \
+                   "device" in type(entity).DESCRIPTOR.fields_by_name
 
     @patch('scvmm.collect.winrm.Session')
     def test_backend_returns_various_entity_subtypes(self, mock_session_class, mock_scvmm_data, mock_policy):
