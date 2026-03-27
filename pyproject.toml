@@ -1,6 +1,6 @@
 [project]
 name = "orb-worker-scvmm"
-version = "0.1.0a6"
+version = "0.1.0"
 description = "Orb worker for discovering Clusters, Hosts, and VMs from System Center Virtual Machine Manager (SCVMM)."
 readme = "README.md"
 requires-python = ">=3.13"
