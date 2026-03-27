@@ -47,4 +47,4 @@ jobs:
           tag_name: ${{ github.ref }}
           release_name: Release ${{ github.ref_name }}
           draft: false
-          prerelease: ${{ contains(github.ref_name, 'rc') || contains(github.ref_name, 'beta') || contains(github.ref_name, 'alpha') }}
+          prerelease: ${{ contains(github.ref_name, 'rc') || contains(github.ref_name, 'b') || contains(github.ref_name, 'a') }}
