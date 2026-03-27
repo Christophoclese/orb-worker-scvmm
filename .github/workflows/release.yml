@@ -26,6 +26,9 @@ jobs:
         with:
           version: "latest"
 
+      - name: Install dependencies and create venv
+        run: uv sync
+
       - name: Install build dependencies
         run: uv pip install build
 
