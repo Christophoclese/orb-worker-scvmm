@@ -603,7 +603,7 @@ wheels = [
 
 [[package]]
 name = "orb-worker-scvmm"
-version = "0.1.0a5"
+version = "0.1.0a6"
 source = { editable = "." }
 dependencies = [
     { name = "netboxlabs-orb-worker" },
