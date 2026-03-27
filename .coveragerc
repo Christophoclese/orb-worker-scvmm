@@ -1,0 +1,51 @@
+[run]
+# Code to test
+source = scvmm
+
+# Paths to exclude
+omit =
+    */tests/*
+    */test_*.py
+    */conftest.py
+    */site-packages/*
+    */__pycache__/*
+    */.venv/*
+    */venv/*
+    */__main__.py
+
+branch = True
+
+[report]
+# Coverage report options
+precision = 2
+show_missing = True
+skip_covered = False
+
+# Exclude certain patterns from coverage
+exclude_lines =
+    pragma: no cover
+    def __repr__
+    raise AssertionError
+    raise NotImplementedError
+    if __name__ == .__main__.:
+    if TYPE_CHECKING:
+    @abstractmethod
+    @abstractproperty
+    @abstractmethod
+    if 0:
+    if False:
+    if not TYPE_CHECKING:
+    @(?:pytest\.)?skip
+    raise NotImplemented
+    except ImportError
+
+# Ignore errors about missing modules
+ignore_errors = True
+
+[html]
+# HTML coverage report
+directory = htmlcov
+extra_css = 
+
+[xml]
+# XML coverage report for CI/CD

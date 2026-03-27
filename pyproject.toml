@@ -1,0 +1,17 @@
+[project]
+name = "orb-worker-scvmm"
+version = "0.1.0"
+description = "Orb worker for discovering Clusters, Hosts, and VMs from System Center Virtual Machine Manager (SCVMM)."
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "netboxlabs-orb-worker>=1.10.0",
+    "pywinrm>=0.5.0",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+    "pytest-mock>=3.10.0",
+]
